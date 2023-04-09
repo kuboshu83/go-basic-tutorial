@@ -8,6 +8,10 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "login")
+}
+
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello Go!!")
 }
@@ -26,6 +30,9 @@ func AddHandlerLog(next http.Handler) http.Handler {
 
 func main() {
 	mux := chi.NewRouter()
+	mux.Route("/login", func(r chi.Router) {
+		r.Get("/", LoginHandler)
+	})
 	mux.Route("/hello", func(r chi.Router) {
 		r.Use(AddHandlerLog)
 		r.Get("/", HelloHandler)
