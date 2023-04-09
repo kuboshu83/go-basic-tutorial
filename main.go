@@ -38,7 +38,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
-	fmt.Fprintf(w, "already authorized")
+	http.Redirect(w, r, "http://localhost:8080/private", http.StatusTemporaryRedirect)
 }
 
 func PrivatePageHandler(w http.ResponseWriter, r *http.Request) {
