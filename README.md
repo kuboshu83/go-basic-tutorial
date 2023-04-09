@@ -7,6 +7,19 @@ Basic認証に成功していたら/privateの内容を表示し、
 
 ![overview](figures/overview.png)
 
+## 試し方
+
+以下のコマンドでサーバーを起動する。
+
+```bash
+make run-server
+```
+
+"http://localhost:8080/private"にブラウザでアクセスすると/loginにリダイレクトして認証を求められる。
+
+ユーザ：kuboshu; パスワード:kuboshuを入力すると認証が成功して、
+/privateにリダイレクトして"This is private zone!!"のメッセージが表示される。
+
 ## Basic認証の基本
 
 Basic認証は、レスポンスのWWW-AuthenticateとリクエストのAuthorizationを使用した認証っぽい。
