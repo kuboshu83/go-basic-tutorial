@@ -12,12 +12,12 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "login")
 }
 
-func HelloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello Go!!")
+func LoginSuccessHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Login!!")
 }
 
-func GoodByeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Good Bye!!")
+func NotLoginHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Not Login!!")
 }
 
 func AddHandlerLog(next http.Handler) http.Handler {
@@ -33,12 +33,12 @@ func main() {
 	mux.Route("/login", func(r chi.Router) {
 		r.Get("/", LoginHandler)
 	})
-	mux.Route("/hello", func(r chi.Router) {
+	mux.Route("/loginsuccess", func(r chi.Router) {
 		r.Use(AddHandlerLog)
-		r.Get("/", HelloHandler)
+		r.Get("/", LoginSuccessHandler)
 	})
-	mux.Route("/goodbye", func(r chi.Router) {
-		r.Get("/", GoodByeHandler)
+	mux.Route("/notlogin", func(r chi.Router) {
+		r.Get("/", NotLoginHandler)
 	})
 	s := &http.Server{
 		Addr:    ":8080",
