@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -19,6 +18,18 @@ func checkBasicAuth(r *http.Request) bool {
 	return true
 }
 
+func RedirectNotAuthorized(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authOk := checkBasicAuth(r)
+		if !authOk {
+			// PermanentRedirectにするとchromeがキャッシュして、ログイン後も勝手にリダイレクトしてハマった
+			http.Redirect(w, r, "http://localhost:8080/login", http.StatusTemporaryRedirect)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	authOk := checkBasicAuth(r)
 	if !authOk {
@@ -27,23 +38,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	}
+	fmt.Fprintf(w, "already authorized")
 }
 
 func PrivatePageHandler(w http.ResponseWriter, r *http.Request) {
-	authOk := checkBasicAuth(r)
-	if !authOk {
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
 	fmt.Fprintf(w, "This is private zone!!")
-}
-
-func AddHandlerLog(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("start handler")
-		next.ServeHTTP(w, r)
-		log.Printf("end handler")
-	})
 }
 
 func main() {
@@ -52,7 +51,7 @@ func main() {
 		r.Get("/", LoginHandler)
 	})
 	mux.Route("/private", func(r chi.Router) {
-		r.Use(AddHandlerLog)
+		r.Use(RedirectNotAuthorized)
 		r.Get("/", PrivatePageHandler)
 	})
 	s := &http.Server{
