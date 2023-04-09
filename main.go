@@ -22,7 +22,7 @@ func checkBasicAuth(r *http.Request) bool {
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	authOk := checkBasicAuth(r)
 	if !authOk {
-		w.Header().Add("WWW-Authenticate", `Basic realm="SECRET AREA"`)
+		w.Header().Add("WWW-Authenticate", "Basic")
 		w.WriteHeader(http.StatusUnauthorized)
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
